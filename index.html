@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<meta name="referrer" content="no-referrer">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0E5C86">
+<title>実績管理</title>
+<style>
+  html, body { margin: 0; padding: 0; height: 100%; background: #0E5C86; overflow: hidden; }
+  #f { display: block; border: 0; width: 100%; height: 100vh; height: 100dvh; }
+  #ng {
+    display: none; padding: 28px 22px; color: #fff;
+    font-family: "Hiragino Kaku Gothic ProN", system-ui, sans-serif; line-height: 1.7;
+  }
+  #ng a { color: #8FE3FF; }
+</style>
+</head>
+<body>
+
+<iframe id="f" title="実績管理" allow="clipboard-read; clipboard-write"></iframe>
+
+<div id="ng">
+  <p>アプリを開けませんでした。</p>
+  <p><a id="direct" href="#">こちらから直接開く</a></p>
+</div>
+
+<script>
+(function () {
+  /* 実績管理アプリ（Google Apps Script）の公開URL。
+     ドメインを挟んだ形にしてある。ふつうの /macros/s/… の形は、
+     Googleアカウントを複数使っていると 404 になるため。 */
+  var EXEC = "https://script.google.com/a/macros/sunnyfunnydays.com/s/" +
+             "AKfycbx3yQDH2IrIxRekzSd66WiPfxxdN-JZevvaNejxvTsYYn4DpivMlI_C4Z8EvK1n-uG8/exec";
+
+  /* このページ自身のURL。担当を切り替えるとき、ここへ戻ってきてもらう。
+     GAS のURLへ直接戻ると、包みが外れて Google の帯が出てしまう。 */
+  var home = location.origin + location.pathname;
+
+  var m = location.search.match(/[?&]who=(ayako|aoyagi)/);
+  var src = EXEC + "?home=" + encodeURIComponent(home) + (m ? "&who=" + m[1] : "");
+
+  var f = document.getElementById("f");
+  document.getElementById("direct").href = src;
+  f.src = src;
+
+  /* 何も出てこないときのために、直接開く道を残しておく */
+  setTimeout(function () {
+    try { if (f.contentWindow && f.contentWindow.length === 0 && !f.dataset.ok) return; } catch (e) {}
+  }, 100);
+  f.addEventListener("load", function () { f.dataset.ok = "1"; });
+  setTimeout(function () {
+    if (!f.dataset.ok) {
+      f.style.display = "none";
+      document.getElementById("ng").style.display = "block";
+    }
+  }, 12000);
+})();
+</script>
+
+</body>
+</html>
