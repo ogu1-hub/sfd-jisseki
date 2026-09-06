@@ -17,11 +17,33 @@
     font-family: "Hiragino Kaku Gothic ProN", system-ui, sans-serif; line-height: 1.7;
   }
   #ng a { color: #8FE3FF; }
+
+  /* 読み込みに10秒以上かかることがある。まっ白だと壊れて見えるので何か出す */
+  #wait {
+    position: fixed; inset: 0; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 16px;
+    background: linear-gradient(160deg, #0E5C86, #12A8C6 55%, #E89A22);
+    color: #fff; font-family: "Hiragino Kaku Gothic ProN", system-ui, sans-serif;
+  }
+  #wait b { font-size: 20px; letter-spacing: .06em; }
+  #wait span { font-size: 13px; opacity: .85; }
+  #wait i {
+    width: 26px; height: 26px; border-radius: 50%;
+    border: 3px solid rgba(255,255,255,.35); border-top-color: #fff;
+    animation: sp 1s linear infinite;
+  }
+  @keyframes sp { to { transform: rotate(360deg); } }
 </style>
 </head>
 <body>
 
 <iframe id="f" title="実績管理" allow="clipboard-read; clipboard-write"></iframe>
+
+<div id="wait">
+  <b>実績管理</b>
+  <i></i>
+  <span>読み込んでいます…</span>
+</div>
 
 <div id="ng">
   <p>アプリを開けませんでした。</p>
@@ -47,17 +69,21 @@
   document.getElementById("direct").href = src;
   f.src = src;
 
-  /* 何も出てこないときのために、直接開く道を残しておく */
+  var wait = document.getElementById("wait");
+
+  f.addEventListener("load", function () {
+    f.dataset.ok = "1";
+    /* 枠の中がまだ描けていないことがあるので、少しだけ待ってから覆いを外す */
+    setTimeout(function () { wait.style.display = "none"; }, 1200);
+  });
+
+  /* それでも出てこないときは、直接開く道を見せる */
   setTimeout(function () {
-    try { if (f.contentWindow && f.contentWindow.length === 0 && !f.dataset.ok) return; } catch (e) {}
-  }, 100);
-  f.addEventListener("load", function () { f.dataset.ok = "1"; });
-  setTimeout(function () {
-    if (!f.dataset.ok) {
-      f.style.display = "none";
-      document.getElementById("ng").style.display = "block";
-    }
-  }, 12000);
+    if (f.dataset.ok) return;
+    wait.style.display = "none";
+    f.style.display = "none";
+    document.getElementById("ng").style.display = "block";
+  }, 25000);
 })();
 </script>
 
