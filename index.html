@@ -69,6 +69,23 @@
   document.getElementById("direct").href = src;
   f.src = src;
 
+  /* 暗証番号をこちら側であずかる。
+     iPhone は枠の中（Googleのページ）の保存を消してしまうので、
+     このページ自身の保存に置く。番号はこの端末から出ない。 */
+  window.addEventListener("message", function (ev) {
+    if (!/^https:\/\/(script\.google\.com|[a-z0-9-]+\.googleusercontent\.com)$/.test(ev.origin)) return;
+    var d = ev.data || {};
+    if (d.sfd === "save" && typeof d.v === "string" && /^[0-9]{3,8}$/.test(d.v)) {
+      try { localStorage.setItem("sfd_pin", d.v); } catch (e) {}
+    } else if (d.sfd === "forget") {
+      try { localStorage.removeItem("sfd_pin"); } catch (e) {}
+    } else if (d.sfd === "ask") {
+      var v = "";
+      try { v = localStorage.getItem("sfd_pin") || ""; } catch (e) {}
+      if (v && ev.source) { try { ev.source.postMessage({ sfd: "pin", v: v }, ev.origin); } catch (e) {} }
+    }
+  });
+
   var wait = document.getElementById("wait");
 
   f.addEventListener("load", function () {
