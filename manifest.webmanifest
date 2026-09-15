@@ -1,0 +1,27 @@
+{
+ "name": "Sunny Funny Days 勤怠実績",
+ "short_name": "勤怠実績",
+ "start_url": "./",
+ "scope": "./",
+ "display": "standalone",
+ "background_color": "#00489D",
+ "theme_color": "#00489D",
+ "icons": [
+  {
+   "src": "icon-192.png",
+   "sizes": "192x192",
+   "type": "image/png"
+  },
+  {
+   "src": "icon-512.png",
+   "sizes": "512x512",
+   "type": "image/png"
+  },
+  {
+   "src": "icon-1024.png",
+   "sizes": "1024x1024",
+   "type": "image/png",
+   "purpose": "any"
+  }
+ ]
+}
